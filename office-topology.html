@@ -2,64 +2,100 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>office topography</title>
+<title>office topology</title>
+
 <style>
 :root{--bg:#050e0a;--fg:#caffdc;--b:rgba(160,255,200,.18);--bh:rgba(160,255,200,.28)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:ui-monospace,menlo,monaco,consolas,monospace;color:var(--fg)}
-.wrap{min-height:100svh;display:flex;align-items:stretch;justify-content:center;padding:12px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-monospace,menlo,monaco,consolas,monospace}
+.wrap{min-height:100svh;display:flex;justify-content:center;align-items:stretch;padding:12px}
 .crt{position:relative;width:min(980px,100%);margin:auto;border-radius:18px;border:1px solid var(--b);background:radial-gradient(120% 100% at 50% 10%,rgba(60,255,160,.12),transparent 60%),var(--bg);box-shadow:0 18px 50px rgba(0,0,0,.6);overflow:hidden}
 .scan{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 50%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.22) 100%);background-size:100% 4px;mix-blend-mode:multiply;pointer-events:none;opacity:.5}
 .inner{display:flex;flex-direction:column;gap:12px;padding:14px}
-.out{white-space:pre-wrap;word-break:break-word;line-height:1.25rem;font-size:clamp(.85rem,.75rem + .35vw,.95rem);text-shadow:0 0 10px rgba(80,255,160,.2);min-height:clamp(260px,38svh,520px);overflow:auto}
+.hud{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(160,255,200,.12);padding-bottom:10px}
+.tag{opacity:.6;font-size:clamp(.78rem,.7rem + .3vw,.92rem)}
+.out{white-space:pre-wrap;word-break:break-word;line-height:1.25rem;font-size:clamp(.9rem,.78rem + .35vw,1rem);text-shadow:0 0 10px rgba(80,255,160,.2);min-height:clamp(340px,48svh,640px);overflow:auto;padding:10px 2px;border-radius:12px}
 .bar{display:flex;flex-wrap:wrap;gap:8px}
-.btn{padding:6px 10px;border-radius:999px;border:1px solid var(--b);background:rgba(255,255,255,.03);color:var(--fg);font-size:.8rem;cursor:pointer;user-select:none}
+.btn{padding:7px 10px;border-radius:999px;border:1px solid var(--b);background:rgba(255,255,255,.03);color:var(--fg);font-size:.82rem;cursor:pointer;user-select:none}
 .btn:hover{background:rgba(160,255,200,.08);border-color:var(--bh)}
-.in{display:flex;gap:8px;align-items:center;border:1px solid var(--b);border-radius:12px;padding:8px 10px;background:rgba(0,0,0,.18)}
-.in span{opacity:.65;white-space:nowrap;font-size:clamp(.75rem,.7rem + .25vw,.88rem)}
-.in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--fg);font-size:clamp(.85rem,.78rem + .35vw,.95rem);padding:2px 0}
-.in input::placeholder{color:rgba(202,255,220,.25)}
+.btn.blue{border-color:rgba(90,180,255,.32)}
+.btn.yellow{border-color:rgba(255,220,90,.32)}
+.btn.red{border-color:rgba(255,110,140,.32)}
+.btn.green{border-color:rgba(90,255,170,.32)}
+.tap{opacity:.5;font-size:.78rem}
+.cursor{display:inline-block;transform:translateY(1px);animation:b 1s steps(2,start) infinite}
+@keyframes b{to{opacity:0}}
+@media (prefers-reduced-motion: reduce){.cursor{animation:none}}
 </style>
+
 <div class="wrap">
-  <div class="crt" id="crt" tabindex="0" role="region" aria-label="office topography terminal">
+  <div class="crt" id="crt" role="region" aria-label="office topography terminal">
     <div class="scan"></div>
     <div class="inner">
-      <div class="out" id="o"></div>
-      <div class="bar">
-        <button class="btn" data="help">help</button>
-        <button class="btn" data="topos">topos</button>
-        <button class="btn" data="map">map</button>
-        <button class="btn" data="roll">roll</button>
-        <button class="btn" data="office blue">blue</button>
-        <button class="btn" data="office yellow">yellow</button>
-        <button class="btn" data="office red">red</button>
-        <button class="btn" data="office green">green</button>
-        <button class="btn" data="clear">clear</button>
+      <div class="hud">
+        <div class="tag">worker@theoffice:$ office topology terminal <span class="cursor">▮</span></div>
+        <div class="tap">tap screen to summon a new topology</div>
       </div>
-      <div class="in">
-        <span>worker@theoffice:$</span>
-        <input id="i" autocomplete="off" spellcheck="false" placeholder="type: help | topos | map | office green | roll">
+
+      <div class="out" id="o" aria-live="polite"></div>
+
+      <div class="bar">
+        <button class="btn blue" data-office="blue">blue</button>
+        <button class="btn yellow" data-office="yellow">yellow</button>
+        <button class="btn red" data-office="red">red</button>
+        <button class="btn green" data-office="green">green</button>
+        <button class="btn" data-roll="1">shuffle</button>
+        <button class="btn" data-clear="1">clear</button>
       </div>
     </div>
   </div>
 </div>
+
 <script>
-const o=document.getElementById("o"),i=document.getElementById("i"),crt=document.getElementById("crt")
-const t=[
-{g:"▦",n:"cubicle grid",d:"obedient lattice where productivity is measured in right angles",a:["▦▦▦▦▦","▦▦▦▦▦","▦▦▦▦▦"]},
-{g:"◎",n:"ring office",d:"hierarchy as orbit, no true center",a:["  ◎◎◎  "," ◎   ◎ ","  ◎◎◎  "]},
-{g:"⟁",n:"command delta",d:"decisions fall downward and never return",a:["   ⟁   ","  ⟁⟁  "," ⟁⟁⟁ "]},
-{g:"⟡",n:"mycelial mesh",d:"informal paths, rumors, and care networks",a:["⟡─⟡─⟡","│ ╲│╱","⟡─⟡─⟡"]},
-{g:"◈",n:"floating pods",d:"teams as archipelagos, alignment is the sea",a:["◈   ◈   ◈","  ◈   ◈  ","◈   ◈   ◈"]},
-{g:"⌂",n:"vaulted records room",d:"archives as weather, policies as ghosts",a:["  ⌂⌂⌂  "," ⌂ ▥ ⌂ ","⌂▥▥▥⌂"]}
+const o=document.getElementById("o"),crt=document.getElementById("crt")
+
+const offices={
+blue:[
+"blue office: compliance and mirrors",
+"myth: built from recycled meeting minutes",
+"totem: the status report (it watches without eyes)",
+"purpose: translate urgency into tickets, then tickets into silence",
+"rule: nothing exists until approved; approval is always pending"
+],
+yellow:[
+"yellow office: sales, sun, and theater",
+"myth: runs on applause and espresso vapor",
+"totem: the pipeline (a golden river with no source)",
+"purpose: turn weather into opportunity, turn opportunity into forecast",
+"rule: if it is not loud, it is not real"
+],
+red:[
+"red office: operations and sacrifice",
+"myth: powered by the hum of a thousand deadlines",
+"totem: the incident (a siren that sings in numbered headings)",
+"purpose: hold systems together with grit, thread, and ritual triage",
+"rule: downtime is a superstition"
+],
+green:[
+"green office: r&d, gardens, and soft circuits",
+"myth: grew from a single seed of unfinished code",
+"totem: the field note (it rewrites you as you write it)",
+"purpose: cultivate prototypes as living organisms, not deliverables",
+"rule: nothing ships; everything grows"
 ]
-const off={
-blue:{m:["compliance and mirrors","nothing exists until approved","totem: the status report"]},
-yellow:{m:["sales and theater","loudness equals truth","totem: the pipeline"]},
-red:{m:["operations and sacrifice","downtime is myth","totem: the incident"]},
-green:{m:["research and gardens","nothing ships, everything grows","totem: the field note"]}
 }
-const map=[
+
+const topos=[
+{g:"▦",n:"cubicle grid",d:"an obedient lattice; feelings are rounded down"},
+{g:"◎",n:"ring district",d:"hierarchy as orbit; the center is always absent"},
+{g:"⟁",n:"command delta",d:"decisions fall like rain and never return"},
+{g:"╫",n:"corridor spine",d:"a hallway that believes it is destiny"},
+{g:"⟡",n:"mycelial mesh",d:"routes appear when walked; rumor becomes infrastructure"},
+{g:"◈",n:"floating pods",d:"teams as archipelagos; alignment is the sea"},
+{g:"⌂",n:"vaulted records room",d:"archive as weather; policies as ghosts"}
+]
+
+const forestmap=[
 "      ⬡⬡⬡⬡⬡⬡⬡⬡⬡",
 "   ⬡⬡   ◎◎◎◎◎   ⬡⬡",
 " ⬡   ⟡──◉──⟡   ⬡",
@@ -69,44 +105,85 @@ const map=[
 "      ⬡⬡⬡⬡⬡⬡⬡⬡⬡",
 "         r──⟡──g"
 ]
-function w(x=""){o.textContent+=x+"\n";o.scrollTop=o.scrollHeight}
-function boot(){
-o.textContent=""
-w("office topography terminal ▮")
-w("")
-w("four offices embedded in forest systems")
-w("type help")
+
+let typing=false
+let q=[]
+let seed=0
+
+function pick(a){return a[Math.random()*a.length|0]}
+function line(s=""){o.textContent+=s+"\n";o.scrollTop=o.scrollHeight}
+function reset(){o.textContent="";banner()}
+function banner(){
+line("office topography")
+line("four offices inside a forest of nodes")
+line("")
+line("tap or click buttons to summon phrases")
+line("")
 }
-function help(){w("");w("help | topos | map | office <color> | roll | clear")}
-function topos(){w("");t.forEach(x=>{w(x.g+" "+x.n);w("  "+x.d)})}
-function office(c){
-const x=off[c];if(!x){w("unknown office");return}
-w("");w(c+" office");x.m.forEach(y=>w("  "+y))
+function enqueue(text){
+q.push(text)
+if(!typing)drain()
 }
-function drawmap(){w("");map.forEach(l=>w(l))}
-function roll(){
-const colors=Object.keys(off)
-const c=colors[Math.random()*colors.length|0]
-const x=t[Math.random()*t.length|0]
-w("");w("office "+c+" over "+x.n);x.a.forEach(l=>w(" "+l))
+function drain(){
+if(!q.length){typing=false;return}
+typing=true
+const text=q.shift()
+typeblock(text,()=>drain())
 }
-function run(s){
-const cmd=(s||"").trim()
-if(!cmd)return
-w("");w("worker@theoffice:$ "+cmd)
-const p=cmd.split(/\s+/)
-if(p[0]=="help")help()
-else if(p[0]=="topos")topos()
-else if(p[0]=="map")drawmap()
-else if(p[0]=="office")office((p[1]||"").toLowerCase())
-else if(p[0]=="roll")roll()
-else if(p[0]=="clear")boot()
-else w("unknown command")
+function typeblock(text,done){
+const target=o
+let i=0
+const startLen=target.textContent.length
+const tick=()=>{
+if(i===0 && startLen>0 && !target.textContent.endsWith("\n")) target.textContent+="\n"
+if(i<text.length){
+target.textContent+=text[i]
+i++
+target.scrollTop=target.scrollHeight
+setTimeout(tick,12+((seed++%7)*3))
+}else{
+target.textContent+="\n"
+target.scrollTop=target.scrollHeight
+done()
 }
-document.querySelectorAll(".btn").forEach(b=>b.onclick=()=>{i.focus({preventScroll:true});run(b.getAttribute("data"))})
-crt.addEventListener("pointerdown",()=>i.focus({preventScroll:true}))
-i.addEventListener("keydown",(e)=>{if(e.key=="enter"){run(i.value);i.value=""}})
-boot()
-setTimeout(()=>i.focus({preventScroll:true}),80)
+}
+tick()
+}
+
+function summon(color){
+const myth=offices[color]||[]
+const topo=pick(topos)
+enqueue("")
+enqueue("worker@theoffice:$ office "+color)
+enqueue("")
+enqueue(color+" office dossier")
+myth.forEach(s=>enqueue("  "+s))
+enqueue("")
+enqueue("topology "+topo.g+" "+topo.n)
+enqueue("  "+topo.d)
+enqueue("")
+enqueue("forest map seed")
+forestmap.forEach(l=>enqueue("  "+l))
+enqueue("")
+enqueue("tap again to re-roll the terrain")
+}
+
+function shuffle(){
+const colors=Object.keys(offices)
+summon(pick(colors))
+}
+
+crt.addEventListener("click",(e)=>{
+const b=e.target.closest("button")
+if(b){
+if(b.hasAttribute("data-office")){summon(b.getAttribute("data-office"));return}
+if(b.hasAttribute("data-roll")){shuffle();return}
+if(b.hasAttribute("data-clear")){reset();return}
+return
+}
+shuffle()
+})
+
+reset()
 </script>
 </html>
