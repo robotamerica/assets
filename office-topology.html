@@ -22,6 +22,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-monospace,menl
 .btn.yellow{border-color:rgba(255,220,90,.32)}
 .btn.red{border-color:rgba(255,110,140,.32)}
 .btn.green{border-color:rgba(90,255,170,.32)}
+.btn.teal{border-color:rgba(90,255,255,.32)}
 .tap{opacity:.5;font-size:.78rem}
 .cursor{display:inline-block;transform:translateY(1px);animation:b 1s steps(2,start) infinite}
 @keyframes b{to{opacity:0}}
@@ -40,10 +41,11 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-monospace,menl
       <div class="out" id="o" aria-live="polite"></div>
 
       <div class="bar">
-        <button class="btn blue" data-office="blue">blue</button>
-        <button class="btn yellow" data-office="yellow">yellow</button>
-        <button class="btn red" data-office="red">red</button>
-        <button class="btn green" data-office="green">green</button>
+        <button class="btn red" data-office="red">operations</button>
+        <button class="btn blue" data-office="blue">accounting</button>
+        <button class="btn teal" data-office="teal">human resources</button>
+        <button class="btn yellow" data-office="yellow">marketing</button>
+        <button class="btn green" data-office="green">technology</button>
         <button class="btn" data-roll="1">shuffle</button>
         <button class="btn" data-clear="1">clear</button>
       </div>
@@ -54,33 +56,53 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-monospace,menl
 <script>
 const o=document.getElementById("o"),crt=document.getElementById("crt")
 
+const palette={
+red:{name:"operations",hex:"#ff6e8c"},
+blue:{name:"accounting",hex:"#5ab4ff"},
+teal:{name:"human resources",hex:"#5affff"},
+yellow:{name:"marketing",hex:"#ffdc5a"},
+green:{name:"technology",hex:"#5affaa"}
+}
+
 const offices={
-blue:[
-"blue office: compliance and mirrors",
-"myth: built from recycled meeting minutes",
-"totem: the status report (it watches without eyes)",
-"purpose: translate urgency into tickets, then tickets into silence",
-"rule: nothing exists until approved; approval is always pending"
-],
-yellow:[
-"yellow office: sales, sun, and theater",
-"myth: runs on applause and espresso vapor",
-"totem: the pipeline (a golden river with no source)",
-"purpose: turn weather into opportunity, turn opportunity into forecast",
-"rule: if it is not loud, it is not real"
-],
 red:[
-"red office: operations and sacrifice",
-"myth: powered by the hum of a thousand deadlines",
+"department: operations",
+"pod: a cluster that became a single-floor building",
+"myth: powered by the hum of deadlines in the soil",
 "totem: the incident (a siren that sings in numbered headings)",
-"purpose: hold systems together with grit, thread, and ritual triage",
+"duty: keep systems stitched together with triage and ritual",
 "rule: downtime is a superstition"
 ],
+blue:[
+"department: accounting",
+"pod: a cluster that became a single-floor building",
+"myth: built from recycled meeting minutes and linted receipts",
+"totem: the ledger (it counts fog and calls it profit)",
+"duty: translate the forest into numbers that can be filed",
+"rule: if it cannot be reconciled, it must be renamed"
+],
+teal:[
+"department: human resources",
+"pod: a cluster that became a single-floor building",
+"myth: staffed by one manager who knows exactly what they are doing: hiring",
+"totem: the application (a leaf that wants your name)",
+"duty: recruit workers for a purpose the forest has not disclosed",
+"rule: you are an exciting opportunity promising a promising future"
+],
+yellow:[
+"department: marketing",
+"pod: a cluster that became a single-floor building",
+"myth: runs on applause and espresso vapor",
+"totem: the slogan engine (it prints weather into desire)",
+"duty: sell the office to itself until the walls agree",
+"rule: if it is not loud, it is not real"
+],
 green:[
-"green office: r&d, gardens, and soft circuits",
+"department: technology",
+"pod: a cluster that became a single-floor building",
 "myth: grew from a single seed of unfinished code",
 "totem: the field note (it rewrites you as you write it)",
-"purpose: cultivate prototypes as living organisms, not deliverables",
+"duty: compile whispers, refactor sky, keep the mossy server breathing",
 "rule: nothing ships; everything grows"
 ]
 }
@@ -95,15 +117,61 @@ const topos=[
 {g:"⌂",n:"vaulted records room",d:"archive as weather; policies as ghosts"}
 ]
 
+const buildings=[
+{c:"red",k:"o",name:"operations building",tag:"incident engine"},
+{c:"blue",k:"a",name:"accounting building",tag:"fog ledger annex"},
+{c:"teal",k:"h",name:"human resources building",tag:"hiring greenhouse"},
+{c:"yellow",k:"m",name:"marketing building",tag:"pipeline theatre"},
+{c:"green",k:"t",name:"technology building",tag:"moss server room"}
+]
+
+const buildingDefs={
+o:[
+"building: operations",
+"structure: single-floor shell grown around a pod",
+"rooms: dispatch nook, triage altar, cable pantry",
+"doors: open when something is already on fire",
+"inside: corridor spine ╫ that believes it is destiny"
+],
+a:[
+"building: accounting",
+"structure: single-floor shell grown around a pod",
+"rooms: reconciliation bay, receipt kiln, quiet audit",
+"doors: open only after the numbers agree to exist",
+"inside: cubicle grid ▦ that loops back to itself"
+],
+h:[
+"building: human resources",
+"structure: single-floor shell grown around a pod",
+"rooms: waiting bench, form orchard, interview mirror",
+"doors: open when you say yes to the office before you understand it",
+"inside: ring district ◎ where hiring is the only certain ritual"
+],
+m:[
+"building: marketing",
+"structure: single-floor shell grown around a pod",
+"rooms: poster wall, slogan press, applause duct",
+"doors: open when attention hits threshold",
+"inside: floating pods ◈ where alignment is theater"
+],
+t:[
+"building: technology",
+"structure: single-floor shell grown around a pod",
+"rooms: moss rack, compile pit, patch garden",
+"doors: open sideways, like a secret",
+"inside: mycelial mesh ⟡ that grows paths as you walk"
+]
+}
+
 const forestmap=[
-"      ⬡⬡⬡⬡⬡⬡⬡⬡⬡",
-"   ⬡⬡   ◎◎◎◎◎   ⬡⬡",
-" ⬡   ⟡──◉──⟡   ⬡",
-"⬡  b──⌂──y  ⬡",
-" ⬡   ⟡──◉──⟡   ⬡",
-"   ⬡⬡   ◎◎◎◎◎   ⬡⬡",
-"      ⬡⬡⬡⬡⬡⬡⬡⬡⬡",
-"         r──⟡──g"
+"        ⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡",
+"     ⬡⬡⬡   ◎◎◎◎◎   ⬡⬡⬡",
+"   ⬡⬡    ⟡──◉──⟡    ⬡⬡",
+"  ⬡     o──⌂──m     ⬡",
+"  ⬡     │  ║  │     ⬡",
+"   ⬡⬡   a──╫──t   ⬡⬡",
+"     ⬡⬡⬡   ⟡h⟡   ⬡⬡⬡",
+"        ⬡⬡⬡⬡⬡⬡⬡⬡⬡"
 ]
 
 let typing=false
@@ -115,11 +183,20 @@ function line(s=""){o.textContent+=s+"\n";o.scrollTop=o.scrollHeight}
 function reset(){o.textContent="";banner()}
 function banner(){
 line("office topography")
-line("four offices inside a forest of nodes")
+line("five pods in a forest of nodes")
+line("each pod grew a single-floor building")
 line("")
-line("tap or click buttons to summon phrases")
+line("colour codes (department -> hex)")
+line("  operations      "+palette.red.hex)
+line("  accounting      "+palette.blue.hex)
+line("  human resources "+palette.teal.hex)
+line("  marketing       "+palette.yellow.hex)
+line("  technology      "+palette.green.hex)
+line("")
+line("tap buttons to summon dossiers + building plans")
 line("")
 }
+
 function enqueue(text){
 q.push(text)
 if(!typing)drain()
@@ -131,19 +208,18 @@ const text=q.shift()
 typeblock(text,()=>drain())
 }
 function typeblock(text,done){
-const target=o
 let i=0
-const startLen=target.textContent.length
+const startLen=o.textContent.length
 const tick=()=>{
-if(i===0 && startLen>0 && !target.textContent.endsWith("\n")) target.textContent+="\n"
+if(i===0 && startLen>0 && !o.textContent.endsWith("\n")) o.textContent+="\n"
 if(i<text.length){
-target.textContent+=text[i]
+o.textContent+=text[i]
 i++
-target.scrollTop=target.scrollHeight
+o.scrollTop=o.scrollHeight
 setTimeout(tick,12+((seed++%7)*3))
 }else{
-target.textContent+="\n"
-target.scrollTop=target.scrollHeight
+o.textContent+="\n"
+o.scrollTop=o.scrollHeight
 done()
 }
 }
@@ -153,11 +229,18 @@ tick()
 function summon(color){
 const myth=offices[color]||[]
 const topo=pick(topos)
+const b=buildings.find(x=>x.c===color)
+const bd=buildingDefs[b.k]||[]
 enqueue("")
-enqueue("worker@theoffice:$ office "+color)
+enqueue("worker@theoffice:$ branch "+palette[color].name)
 enqueue("")
-enqueue(color+" office dossier")
+enqueue("colour "+palette[color].hex)
+enqueue("")
+enqueue("pod dossier")
 myth.forEach(s=>enqueue("  "+s))
+enqueue("")
+enqueue("building dossier")
+bd.forEach(s=>enqueue("  "+s))
 enqueue("")
 enqueue("topology "+topo.g+" "+topo.n)
 enqueue("  "+topo.d)
@@ -165,12 +248,20 @@ enqueue("")
 enqueue("forest map seed")
 forestmap.forEach(l=>enqueue("  "+l))
 enqueue("")
+enqueue("map key")
+enqueue("  o operations building")
+enqueue("  a accounting building")
+enqueue("  h human resources building")
+enqueue("  m marketing building")
+enqueue("  t technology building")
+enqueue("  ◉ hub / crossroad")
+enqueue("  ⌂ archive / records vault")
+enqueue("")
 enqueue("tap again to re-roll the terrain")
 }
 
 function shuffle(){
-const colors=Object.keys(offices)
-summon(pick(colors))
+summon(pick(Object.keys(offices)))
 }
 
 crt.addEventListener("click",(e)=>{
