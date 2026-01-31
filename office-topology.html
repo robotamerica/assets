@@ -3,7 +3,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>office topography</title>
-
 <style>
 :root{--bg:#050e0a;--fg:#caffdc;--b:rgba(160,255,200,.18);--bh:rgba(160,255,200,.28)}
 *{box-sizing:border-box}
@@ -20,16 +19,12 @@ body{margin:0;background:var(--bg);font-family:ui-monospace,menlo,monaco,consola
 .in span{opacity:.65;white-space:nowrap;font-size:clamp(.75rem,.7rem + .25vw,.88rem)}
 .in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--fg);font-size:clamp(.85rem,.78rem + .35vw,.95rem);padding:2px 0}
 .in input::placeholder{color:rgba(202,255,220,.25)}
-.blink{animation:b 1s steps(2,start) infinite}
-@keyframes b{to{opacity:0}}
 </style>
-
 <div class="wrap">
   <div class="crt" id="crt" tabindex="0" role="region" aria-label="office topography terminal">
     <div class="scan"></div>
     <div class="inner">
       <div class="out" id="o"></div>
-
       <div class="bar">
         <button class="btn" data="help">help</button>
         <button class="btn" data="topos">topos</button>
@@ -41,7 +36,6 @@ body{margin:0;background:var(--bg);font-family:ui-monospace,menlo,monaco,consola
         <button class="btn" data="office green">green</button>
         <button class="btn" data="clear">clear</button>
       </div>
-
       <div class="in">
         <span>worker@theoffice:$</span>
         <input id="i" autocomplete="off" spellcheck="false" placeholder="type: help | topos | map | office green | roll">
@@ -49,7 +43,6 @@ body{margin:0;background:var(--bg);font-family:ui-monospace,menlo,monaco,consola
     </div>
   </div>
 </div>
-
 <script>
 const o=document.getElementById("o"),i=document.getElementById("i"),crt=document.getElementById("crt")
 const t=[
@@ -61,10 +54,10 @@ const t=[
 {g:"⌂",n:"vaulted records room",d:"archives as weather, policies as ghosts",a:["  ⌂⌂⌂  "," ⌂ ▥ ⌂ ","⌂▥▥▥⌂"]}
 ]
 const off={
-blue:{m:["compliance and mirrors","nothing exists until approved","totem: the status report"],k:["▦","⌂","╫"]},
-yellow:{m:["sales and theater","loudness equals truth","totem: the pipeline"],k:["◎","⟁","◈"]},
-red:{m:["operations and sacrifice","downtime is myth","totem: the incident"],k:["⟁","▦","╫"]},
-green:{m:["research and gardens","nothing ships, everything grows","totem: the field note"],k:["⟡","◎","◈"]}
+blue:{m:["compliance and mirrors","nothing exists until approved","totem: the status report"]},
+yellow:{m:["sales and theater","loudness equals truth","totem: the pipeline"]},
+red:{m:["operations and sacrifice","downtime is myth","totem: the incident"]},
+green:{m:["research and gardens","nothing ships, everything grows","totem: the field note"]}
 }
 const map=[
 "      ⬡⬡⬡⬡⬡⬡⬡⬡⬡",
@@ -79,7 +72,7 @@ const map=[
 function w(x=""){o.textContent+=x+"\n";o.scrollTop=o.scrollHeight}
 function boot(){
 o.textContent=""
-w("office topography terminal "+String.fromCharCode(9612))
+w("office topography terminal ▮")
 w("")
 w("four offices embedded in forest systems")
 w("type help")
@@ -110,17 +103,10 @@ else if(p[0]=="roll")roll()
 else if(p[0]=="clear")boot()
 else w("unknown command")
 }
-document.querySelectorAll(".btn").forEach(b=>b.onclick=()=>{focusin();run(b.getAttribute("data"))})
-function focusin(){i.focus({preventScroll:true})}
-crt.addEventListener("pointerdown",()=>focusin())
-window.addEventListener("keydown",(e)=>{
-if(e.key==="/"&&document.activeElement!==i){e.preventDefault();focusin();return}
-if(document.activeElement!==i){
-if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){focusin()}
-}
-})
+document.querySelectorAll(".btn").forEach(b=>b.onclick=()=>{i.focus({preventScroll:true});run(b.getAttribute("data"))})
+crt.addEventListener("pointerdown",()=>i.focus({preventScroll:true}))
 i.addEventListener("keydown",(e)=>{if(e.key=="enter"){run(i.value);i.value=""}})
 boot()
-setTimeout(()=>focusin(),60)
+setTimeout(()=>i.focus({preventScroll:true}),80)
 </script>
 </html>
