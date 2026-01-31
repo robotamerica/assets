@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>office topography</title>
+
+<style>
+body{margin:0;background:#050e0a;font-family:ui-monospace,menlo,monaco,consolas,monospace}
+.crt{position:relative;max-width:980px;margin:24px auto;padding:16px;border-radius:18px;border:1px solid rgba(160,255,200,.18);background:radial-gradient(120% 100% at 50% 10%,rgba(60,255,160,.12),transparent 60%),#050e0a;box-shadow:0 18px 50px rgba(0,0,0,.6);color:#caffdc}
+.scan{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 50%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.22) 100%);background-size:100% 4px;mix-blend-mode:multiply;pointer-events:none;opacity:.5}
+.out{white-space:pre-wrap;line-height:1.25rem;font-size:.9rem;text-shadow:0 0 10px rgba(80,255,160,.2);min-height:360px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{padding:6px 10px;border-radius:999px;border:1px solid rgba(160,255,200,.25);background:rgba(255,255,255,.03);color:#caffdc;font-size:.8rem;cursor:pointer}
+.btn:hover{background:rgba(160,255,200,.08)}
+.in{display:flex;gap:8px;align-items:center;border:1px solid rgba(160,255,200,.18);border-radius:12px;padding:6px 8px}
+.in span{opacity:.6}
+.in input{flex:1;background:transparent;border:0;outline:0;color:#caffdc;font-size:.9rem}
+.blink{animation:b 1s steps(2,start) infinite}
+@keyframes b{to{opacity:0}}
+</style>
+
+<div class="crt">
+<div class="scan"></div>
+<div class="out" id="o"></div>
+
+<div class="bar">
+<button class="btn" data="help">help</button>
+<button class="btn" data="topos">topos</button>
+<button class="btn" data="map">map</button>
+<button class="btn" data="roll">roll</button>
+<button class="btn" data="office blue">blue</button>
+<button class="btn" data="office yellow">yellow</button>
+<button class="btn" data="office red">red</button>
+<button class="btn" data="office green">green</button>
+<button class="btn" data="clear">clear</button>
+</div>
+
+<div class="in">
+<span>km@theoffice:$</span>
+<input id="i" autocomplete="off">
+</div>
+</div>
+
+<script>
+const o=document.getElementById("o"),i=document.getElementById("i")
+const t=[
+{g:"▦",n:"cubicle grid",d:"obedient lattice where productivity is measured in right angles",a:["▦▦▦▦▦","▦▦▦▦▦","▦▦▦▦▦"]},
+{g:"◎",n:"ring office",d:"hierarchy as orbit, no true center",a:["  ◎◎◎  "," ◎     ◎ ","  ◎◎◎  "]},
+{g:"⟁",n:"command delta",d:"decisions fall downward and never return",a:["   ⟁   ","  ⟁⟁  "," ⟁⟁⟁ "]},
+{g:"⟡",n:"mycelial mesh",d:"informal paths, rumors, and care networks",a:["⟡─⟡─⟡","│ ╲│╱","⟡─⟡─⟡"]}
+]
+const off={
+blue:{m:["compliance and mirrors","nothing exists until approved","totem: the status report"],k:["▦","⌂"]},
+yellow:{m:["sales and theater","loudness equals truth","totem: the pipeline"],k:["◎","⟁"]},
+red:{m:["operations and sacrifice","downtime is myth","totem: the incident"],k:["⟁","▦"]},
+green:{m:["research and gardens","nothing ships, everything grows","totem: the field note"],k:["⟡","◎"]}
+}
+const map=[
+"      ⬡⬡⬡⬡⬡⬡⬡",
+"   ⬡⬡   ◎◎◎   ⬡⬡",
+" ⬡   ⟡──◉──⟡   ⬡",
+"⬡  b──⌂──y  ⬡",
+" ⬡   ⟡──◉──⟡   ⬡",
+"   ⬡⬡   ◎◎◎   ⬡⬡",
+"      ⬡⬡⬡⬡⬡⬡⬡",
+"         r──⟡──g"
+]
+
+function w(x=""){o.textContent+=x+"\n";o.scrollTop=o.scrollHeight}
+function boot(){
+o.textContent=""
+w("office topography terminal ▮")
+w("")
+w("four offices embedded in forest systems")
+w("type help")
+}
+function help(){
+w("")
+w("help | topos | map | office <color> | roll | clear")
+}
+function topos(){
+w("")
+t.forEach(x=>{w(x.g+" "+x.n);w("  "+x.d)})
+}
+function office(c){
+const x=off[c];if(!x){w("unknown office");return}
+w("")
+w(c+" office")
+x.m.forEach(y=>w("  "+y))
+}
+function drawmap(){
+w("")
+map.forEach(l=>w(l))
+}
+function roll(){
+const c=Object.keys(off)[Math.random()*4|0]
+const x=t[Math.random()*t.length|0]
+w("")
+w("office "+c+" over "+x.n)
+x.a.forEach(l=>w(" "+l))
+}
+function run(s){
+w("");w("km@theoffice:$ "+s)
+const p=s.split(" ")
+if(p[0]=="help")help()
+else if(p[0]=="topos")topos()
+else if(p[0]=="map")drawmap()
+else if(p[0]=="office")office(p[1])
+else if(p[0]=="roll")roll()
+else if(p[0]=="clear")boot()
+else w("unknown command")
+}
+document.querySelectorAll(".btn").forEach(b=>b.onclick=()=>run(b.getAttribute("data")))
+i.onkeydown=e=>{if(e.key=="enter"){run(i.value);i.value=""}}
+boot()
+</script>
+</html>
